@@ -1,0 +1,49 @@
+name: deploy website
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node version
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.13.2
+
+      - name: Install project dependencies
+        id: npm-install
+        run: npm install
+
+      - name: Build the project with npm
+        id: npm-build
+        run: npm run build
+
+      - name: Comment PR if tests have been failed
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Build failed! Please review your changes again'
+            })
+
+      - uses: amondnet/vercel-action@v19
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.TOKEN_GITHUB_ACTION }} #Optional
+          # vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}} #Required
+          github-comment: true
+          working-directory: ./build/ #Your Working Directory, Optional
+          # alias-domains: | #Optional
+          #   staging.angular.vercel-action.amond.dev
+          #   pr-{{PR_NUMBER}}.angular.vercel-action.amond.dev
