@@ -21,7 +21,7 @@ jobs:
 
       - name: Build the project with npm
         id: npm-build
-        run: npm run build-testing
+        run: npm run build
 
       - name: Comment PR if tests have been failed
         if: failure()
@@ -34,7 +34,7 @@ jobs:
               repo: context.repo.repo,
               body: 'Build failed! Please review your changes again'
             })
-            
+
       - uses: amondnet/vercel-action@v19
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
