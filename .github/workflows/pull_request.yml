@@ -1,5 +1,8 @@
 name: deploy website
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - development
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -8,10 +11,10 @@ jobs:
       - uses: amondnet/vercel-action@v19
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          github-token: ${{ secrets.TOKEN_GITHUB_ACTION }} #Optional 
+          github-token: ${{ secrets.TOKEN_GITHUB_ACTION }} #Optional
           # vercel-args: '--prod' #Optional
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}  #Required
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}} #Required 
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}} #Required
           github-comment: true
           # working-directory: ./sub-directory #Your Working Directory, Optional
           # alias-domains: | #Optional
